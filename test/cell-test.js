@@ -60,10 +60,16 @@ vows.describe('Cell').addBatch({
             topic2.removePossibleValue(3);
             assert.equal(topic2.toString(), '');
         },
-        'setting a definitive value removes all possible values' : function (topic) {
-            var topic = new topic([1,3,5,7]);
-            topic.setValue(4);
-            assert.equal(topic.toString(), '4');
+        'setting a definitive value removes all possible values' : {
+        	topic : function (topic) {
+        		var cell = new topic([1,3,5,7]);
+        		cell.on('value', this.callback);
+        		cell.setValue(4);
+        	},
+        	'all other values have been removed' : function (err, value) {
+        		assert.deepEqual(err, null);
+                assert.equal(value, 1 << (4 - 1));
+            }
         }
     }
 }).export(module);
