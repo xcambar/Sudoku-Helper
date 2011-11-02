@@ -66,9 +66,11 @@ vows.describe('Cell').addBatch({
         		cell.on('value', this.callback);
         		cell.setValue(4);
         	},
+        	'the human readable value is passed as the second paramater of the callback' : function (err, value) {
+        		assert.equal(value, 4);
+        	},
         	'all other values have been removed' : function (err, value) {
-        		assert.deepEqual(err, null);
-                assert.equal(value, 1 << (4 - 1));
+        		assert.equal(this._value, 1 << (value - 1));
             }
         }
     }
