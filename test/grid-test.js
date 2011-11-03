@@ -144,5 +144,48 @@ vows.describe('Grid').addBatch({
     			assert.deepEqual(region[cell].getValues(), [expectedRegionValues[cell]]);
     		}
     	}
+    },
+    'filling a grid' : {
+    	topic: function () {
+    		return [
+                 1,2,3,4,5,6,7,8,9,
+                 4,0,6,7,8,9,1,2,3,
+                 7,8,9,1,2,3,4,5,0,
+                 2,3,4,5,6,7,8,9,1,
+                 5,0,7,8,9,1,0,3,4,
+                 8,9,1,2,3,4,5,0,7,
+                 3,4,5,6,7,8,9,1,2,
+                 6,7,8,9,1,2,3,4,5,
+                 9,1,2,3,4,5,0,7,8
+    		];
+    	},
+        'removing all values throws an error' : function (topic) {
+        	var grid = new Grid(topic);
+        	var topic1 = grid.getCell(8, 8);
+        	topic1.removePossibleValue(1);
+        	topic1.removePossibleValue(2);
+        	topic1.removePossibleValue(3);
+        	topic1.removePossibleValue(4);
+        	topic1.removePossibleValue(5);
+        	topic1.removePossibleValue(6);
+        	topic1.removePossibleValue(7);
+        	topic1.removePossibleValue(8);
+        	assert.throws(function () { topic1.removePossibleValue(9); });
+        	assert.deepEqual(topic1.getValues(), [9]);
+        },
+    	'possible values are correct' : function (gridConf) {
+    		var grid = new Grid(gridConf);
+    		var cell = grid.getCell(1, 1);
+    		assert.deepEqual(cell.getValues().length, 1);
+    		assert.deepEqual(cell.getValues(), [5]);
+    		var cell = grid.getCell(4, 6);
+    		assert.deepEqual(cell.getValues().length, 2);
+    		console.log(cell.getValues());
+    		assert.deepEqual(cell.getValues(), [2, 6]);
+    	},
+    	'setting a cell updates the neighbours' : function (topic) {
+    		var grid = new Grid(topic);
+    		
+    	}
     }
 }).export(module);
