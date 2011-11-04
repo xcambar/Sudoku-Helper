@@ -53,12 +53,22 @@ vows.describe('Cell').addBatch({
         'a value that is not available can be safely removed' : function (topic) {
             var topic1 = new topic();
             topic1.removePossibleValue(3);
+            assert.equal(topic1.toString(), '1,2,4,5,6,7,8,9');
             topic1.removePossibleValue(3);
             assert.equal(topic1.toString(), '1,2,4,5,6,7,8,9');
-            var topic2 = new topic(3);
-            topic2.removePossibleValue(3);
-            topic2.removePossibleValue(3);
-            assert.equal(topic2.toString(), '');
+        },
+        'removing all values throws an error' : function (topic) {
+        	var topic1 = new topic([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        	topic1.removePossibleValue(1);
+        	topic1.removePossibleValue(2);
+        	topic1.removePossibleValue(3);
+        	topic1.removePossibleValue(4);
+        	topic1.removePossibleValue(5);
+        	topic1.removePossibleValue(6);
+        	topic1.removePossibleValue(7);
+        	topic1.removePossibleValue(8);
+        	assert.throws(function () { topic1.removePossibleValue(9); });
+        	assert.deepEqual(topic1.getValues(), [9]);
         },
         'setting a definitive value removes all possible values' : {
         	topic : function (topic) {

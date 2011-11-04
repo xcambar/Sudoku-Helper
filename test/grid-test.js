@@ -148,44 +148,82 @@ vows.describe('Grid').addBatch({
     'filling a grid' : {
     	topic: function () {
     		return [
-                 1,2,3,4,5,6,7,8,9,
-                 4,0,6,7,8,9,1,2,3,
-                 7,8,9,1,2,3,4,5,0,
-                 2,3,4,5,6,7,8,9,1,
-                 5,0,7,8,9,1,0,3,4,
-                 8,9,1,2,3,4,5,0,7,
-                 3,4,5,6,7,8,9,1,2,
+                 0,0,0,4,5,6,7,0,9,
+                 0,0,0,7,8,9,1,0,3,
+                 0,0,0,1,2,3,4,0,0,
+                 0,0,0,5,6,7,0,0,0,
+                 5,0,7,8,9,1,0,0,0,
+                 8,9,1,2,3,4,0,0,0,
+                 3,4,5,6,7,8,0,0,0,
                  6,7,8,9,1,2,3,4,5,
-                 9,1,2,3,4,5,0,7,8
+                 0,0,0,3,4,5,0,7,8
     		];
     	},
-        'removing all values throws an error' : function (topic) {
-        	var grid = new Grid(topic);
-        	var topic1 = grid.getCell(8, 8);
-        	topic1.removePossibleValue(1);
-        	topic1.removePossibleValue(2);
-        	topic1.removePossibleValue(3);
-        	topic1.removePossibleValue(4);
-        	topic1.removePossibleValue(5);
-        	topic1.removePossibleValue(6);
-        	topic1.removePossibleValue(7);
-        	topic1.removePossibleValue(8);
-        	assert.throws(function () { topic1.removePossibleValue(9); });
-        	assert.deepEqual(topic1.getValues(), [9]);
-        },
     	'possible values are correct' : function (gridConf) {
     		var grid = new Grid(gridConf);
     		var cell = grid.getCell(1, 1);
-    		assert.deepEqual(cell.getValues().length, 1);
-    		assert.deepEqual(cell.getValues(), [5]);
+    		assert.deepEqual(cell.getValues().length, 3);
+    		assert.deepEqual(cell.getValues(), [2, 5, 6]);
     		var cell = grid.getCell(4, 6);
     		assert.deepEqual(cell.getValues().length, 2);
-    		console.log(cell.getValues());
     		assert.deepEqual(cell.getValues(), [2, 6]);
     	},
     	'setting a cell updates the neighbours' : function (topic) {
     		var grid = new Grid(topic);
-    		
+    		var updatedCell = grid.getCell(4, 6);
+    		var neighbour41 = grid.getCell(4, 1);
+    		var neighbour57 = grid.getCell(5, 7);
+    		var neighbour86 = grid.getCell(8, 6);
+    		assert.deepEqual(updatedCell.getValues(), [2, 6]);
+    		assert.deepEqual(neighbour41.getValues(), [2, 3, 6]);
+    		assert.deepEqual(neighbour57.getValues(), [5, 6]);
+    		assert.deepEqual(neighbour86.getValues(), [2, 6, 9]);
+    		updatedCell.setValue(2);
+    		assert.deepEqual(updatedCell.getValues(), [2]);
+    		assert.deepEqual(neighbour41.getValues(), [3, 6]);
+    		assert.deepEqual(neighbour57.getValues(), [5, 6]);
+    		assert.deepEqual(neighbour86.getValues(), [6, 9]);
+    	},
+    	'setting a cell to a wrong value throws an error' : function (topic) {
+    		var grid = new Grid(topic);
+    		var updatedCell = grid.getCell(4, 6);
+    		assert.deepEqual(updatedCell.getValues(), [2, 6]);
+    		assert.throws(function () { updatedCell.setValue(3);});
     	}
+    },
+    'validating a grid' : {
+        topic: function () {
+        	return Grid;
+        },
+        'returns true when the gris is filled' : function (topic) {
+        	var grid = [
+                1,2,3,4,5,6,7,8,9,
+                4,5,6,7,8,9,1,2,3,
+                7,8,9,1,2,3,4,5,6,
+                2,3,4,5,6,7,8,9,1,
+                5,6,7,8,9,1,2,3,4,
+                8,9,1,2,3,4,5,6,7,
+                3,4,5,6,7,8,9,1,2,
+                6,7,8,9,1,2,3,4,5,
+                9,1,2,3,4,5,6,7,8
+            ];
+        	var completeGrid = new topic(grid);
+        	assert.ok(completeGrid.validate());
+        },
+        'returns false when empty' : function (topic) {
+        	var grid = [
+	            0,0,0,0,0,0,0,0,0,
+	            0,0,0,0,0,0,0,0,0,
+	            0,0,0,0,0,0,0,0,0,
+	            0,0,0,0,0,0,0,0,0,
+	            0,0,0,0,0,0,0,0,0,
+	            0,0,0,0,0,0,0,0,0,
+	            0,0,0,0,0,0,0,0,0,
+	            0,0,0,0,0,0,0,0,0,
+	            0,0,0,0,0,0,0,0,0
+	        ];
+	    	var completeGrid = new topic(grid);
+	    	assert.ok(!completeGrid.validate());
+	    }
     }
 }).export(module);
